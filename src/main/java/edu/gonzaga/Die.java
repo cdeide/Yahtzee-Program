@@ -1,4 +1,11 @@
-/* (C)2021 */
+/**
+ * This program plays a simple version of Yahtzee
+ * CPSC 224, Fall 2021
+ * Homework 2
+ * No sources to site
+ * @ConnorDeide
+ * @Version 2.0 10/3/2021
+ */
 package edu.gonzaga;
 
 /*
@@ -62,7 +69,6 @@ public class Die implements Comparable<Die> {
     @Override
     public String toString() {
         String ret = "";
-        // ret += "Die: " + this.sideUp.toString() + " of " + this.numSides.toString() + " sides";
         ret += this.sideUp.toString();
         return ret;
     }
@@ -75,7 +81,6 @@ public class Die implements Comparable<Die> {
     */
     @Override
     public int compareTo(Die otherDie) {
-        int myvar_aslkdfj = 2;
         return this.sideUp.compareTo(otherDie.sideUp);
     }
 }
