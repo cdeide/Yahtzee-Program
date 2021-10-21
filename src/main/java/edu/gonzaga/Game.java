@@ -10,12 +10,9 @@ package edu.gonzaga;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
-import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.util.Scanner;
-
-import javax.sound.sampled.SourceDataLine;
 
 /**
  * Class used for overall game flow as well as reading, writing, and outputting game configuration to/from file
@@ -45,7 +42,8 @@ public class Game {
         player.hand = player.getHand();
         //Output the scores given the players hand
         System.out.println();
-        player.getScoreCard(game);
+        player.scorecard.setScoreCard(game, player);
+        player.displayPlayerScoreCard(game);
         System.out.println();
     }
 
@@ -120,6 +118,7 @@ public class Game {
     public static String getInput() {
         Scanner kb = new Scanner(System.in);
         String input = kb.nextLine();
+        kb.close();
         return input;
     }
 }

@@ -16,6 +16,7 @@ import java.util.Scanner;
  */
 public class Player {
     protected ArrayList<Die> hand;
+    protected Scorecard scorecard = new Scorecard();
 
     /**
      * Method returns the value of hand, a field of class Player
@@ -31,18 +32,27 @@ public class Player {
      */
     public void makeHand(Game game) {
         String userInput = " ";
-        ArrayList<Die> hand;
+        Boolean displayedScore = false;
+        //ArrayList<Die> hand;
         hand = rollAll(game);
+        scorecard.setScoreCard(game, this);
         for(int turn = 1; turn <= game.numRolls; turn++) {
-            for(int j = 0; j < userInput.length(); j++) {
-                if(userInput.charAt(j) == 'n') {
-                    hand.set(j, rollOne(game));
+            if(userInput.equals("S") && !displayedScore) {
+                displayPlayerScoreCard(game);
+                displayedScore = true;
+            }
+            else {
+                for(int j = 0; j < userInput.length(); j++) {
+                    if(userInput.charAt(j) == 'n') {
+                        hand.set(j, rollOne(game));
+                    }
                 }
             }
             if(turn < game.numRolls) {
                 System.out.println("Your roll was:");
                 outputHand(hand);
-                userInput = userKeeps();
+                scorecard.setScoreCard(game, this);
+                userInput = userKeeps(displayedScore);
             }
         }
         // Output the sorted hand
@@ -50,7 +60,7 @@ public class Player {
         System.out.println("Your final hand is:");
         outputHand(hand);
         // Assign the hand to the player
-        this.hand = hand;
+        //this.hand = hand;
     }
 
     /**
@@ -100,34 +110,64 @@ public class Player {
      * @param hand
      */
     private void outputHand(ArrayList<Die> hand) {
+        System.out.print("[ ");
         for(int i = 0; i < hand.size(); i++) {
             System.out.print(hand.get(i).getSideUp() + " ");
         }
+        System.out.print("]");
         System.out.println();
     }
 
     /**
-     * Method calls all methods from ScoreCard class to output the scores
+     * Method displays the scorecard to the system when user inputs 'S'
      */
-    public void getScoreCard(Game game) {
-        Scorecard scoreCard = new Scorecard();
-        scoreCard.scoreUpperSection(game, hand);
-        scoreCard.scoreNofAKind(game, hand);
-        scoreCard.scoreFullHouse(game, hand);
-        scoreCard.scoreSmlStraight(game, hand);
-        scoreCard.scoreLrgStraight(game, hand);
-        scoreCard.scoreYahtzee(game, hand);
-        scoreCard.scoreChance(game, hand);
+    public void displayPlayerScoreCard(Game game) {
+        System.out.println("Line      Score");
+        System.out.println("-------------------");
+        int upperSum = 0;
+        for(int i = 1; i <= game.dieSides; ++i) {
+            System.out.println(i + "                " + scorecard.scoreUpperArray.get(i - 1));
+            upperSum += scorecard.scoreUpperArray.get(i - 1);
+        }
+        System.out.println("-------------------");
+        int bonus = 0;
+        if(upperSum >= 63)
+            bonus = 35;
+        int upperTotal = upperSum + bonus;
+        System.out.println("Sub Total        " + upperSum);
+        System.out.println("Bonus            " + bonus);
+        System.out.println("-------------------");
+        System.out.println("Upper Total      " + upperTotal);
+        System.out.println();
+        System.out.println("3Kind            " + scorecard.score3Kind);
+        System.out.println("4Kind            " + scorecard.score4Kind);
+        System.out.println("FullHouse        " + scorecard.scoreFullHouse);
+        System.out.println("SmlStrt          " + scorecard.scoreSmlStraight);
+        System.out.println("LrgStrt          " + scorecard.scoreLrgStraight);
+        System.out.println("Yahtzee          " + scorecard.scoreYahtzee);
+        System.out.println("Chance           " + scorecard.scoreChance);
+        System.out.println("-------------------");
+        int lowerSum = scorecard.score3Kind + scorecard.score4Kind + scorecard.scoreFullHouse + scorecard.scoreSmlStraight + scorecard.scoreLrgStraight + scorecard.scoreYahtzee + scorecard.scoreChance;
+        System.out.println("Lower Total      " + lowerSum);
+        System.out.println("-------------------");
+        System.out.println("Grand Total      " + (upperSum + lowerSum));
+        System.out.println();
     }
 
     /**
      * Method gets user input for which dice to keep and which to re-roll
      * @return a String to be used in makeHand
      */
-    public String userKeeps() {
+    public String userKeeps(Boolean displayedScore) {
         Scanner kb = new Scanner(System.in);
-        System.out.println("Enter dice you would like to keep (y or n):");
+        if(!displayedScore) {
+            System.out.println("Enter dice you would like to keep (y or n) or 'S' to see your Scorecard:");
+        }
+        else {
+            System.out.println("Enter dice you would like to keep (y or n)");
+        }
         String userInput = kb.nextLine();
+        kb.close();
         return userInput;
     }
 }

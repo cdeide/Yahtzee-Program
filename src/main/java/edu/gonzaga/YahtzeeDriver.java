@@ -37,6 +37,7 @@ public class YahtzeeDriver {
         Scanner kb = new Scanner(System.in);
         System.out.println("Enter 'y' to play again:");
         String userInput = kb.nextLine();
+        kb.close();
         return userInput;
     }
 }
