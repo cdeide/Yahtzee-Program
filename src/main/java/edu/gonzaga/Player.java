@@ -1,10 +1,10 @@
 /**
  * This program plays a simple version of Yahtzee
  * CPSC 224, Fall 2021
- * Homework 2
+ * Homework 3
  * No sources to site
  * @ConnorDeide
- * @Version 2.0 10/3/2021
+ * @Version 3.0 10/24/2021
  */
 package edu.gonzaga;
 
@@ -16,28 +16,38 @@ import java.util.Scanner;
  */
 public class Player {
     protected ArrayList<Die> hand;
-    protected Scorecard scorecard = new Scorecard();
+    protected Scorecard scorecard;
 
-    /**
-     * Method returns the value of hand, a field of class Player
-     * @return ArrayList of type die called hand
-     */
-    public ArrayList<Die> getHand() {
-        return hand;
+    //Constructor
+    public Player() {
+        scorecard = new Scorecard();
     }
 
     /**
-     * Method rolls a hand for the user than gets their input for re-rolls until user is out of turns.
-     * Then sorts their hand and assigns it to the class member variable hand
+     * Method plays a round of the game: rolls hand, gets which die the user wants to keep, re-rolls the ones the user doesnt want to keep
+     * and repeats for however turns there are. Then tells user the possible score for each line, gets which one they want to choose for the round
+     * and updates the users scorecard.
      */
-    public void makeHand(Game game) {
-        String userInput = " ";
+    public void playRound(Game game) {
+        String keepAll = "";
         Boolean displayedScore = false;
-        //ArrayList<Die> hand;
         hand = rollAll(game);
-        scorecard.setScoreCard(game, this);
-        for(int turn = 1; turn <= game.numRolls; turn++) {
-            if(userInput.equals("S") && !displayedScore) {
+        //Create string with length of numDie full of y's to check if user wants to keep all
+        for(int i = 0; i < game.numDie; ++i) {
+            keepAll += "y";
+        }
+        System.out.println();
+        System.out.println("Your roll was:");
+        outputHand(hand);
+        System.out.println();
+
+        int turn = 2; //Turn equals two because 
+        while(turn <= game.numRolls) {
+            String userInput = userKeeps(displayedScore);
+            if(userInput.equals(keepAll)) { //No need to re-roll if user wants to keep all
+                break;
+            }
+            else if(userInput.equals("S") && !displayedScore) { //Can only display scorecard once per-round
                 displayPlayerScoreCard(game);
                 displayedScore = true;
             }
@@ -47,20 +57,20 @@ public class Player {
                         hand.set(j, rollOne(game));
                     }
                 }
-            }
-            if(turn < game.numRolls) {
+                System.out.println();
                 System.out.println("Your roll was:");
                 outputHand(hand);
-                scorecard.setScoreCard(game, this);
-                userInput = userKeeps(displayedScore);
+                System.out.println();
+                turn++;
             }
         }
-        // Output the sorted hand
+        //Output the sorted hand
         sortHand(hand);
         System.out.println("Your final hand is:");
         outputHand(hand);
-        // Assign the hand to the player
-        //this.hand = hand;
+        System.out.println();
+        scorecard.getPlayerScoreLine(game, hand);
+        scorecard.resetScoreLines();
     }
 
     /**
@@ -122,7 +132,7 @@ public class Player {
      * Method displays the scorecard to the system when user inputs 'S'
      */
     public void displayPlayerScoreCard(Game game) {
-        System.out.println("Line      Score");
+        System.out.println("Line          Score");
         System.out.println("-------------------");
         int upperSum = 0;
         for(int i = 1; i <= game.dieSides; ++i) {
@@ -152,6 +162,7 @@ public class Player {
         System.out.println("-------------------");
         System.out.println("Grand Total      " + (upperSum + lowerSum));
         System.out.println();
+        outputHand(hand);
     }
 
     /**
@@ -159,15 +170,14 @@ public class Player {
      * @return a String to be used in makeHand
      */
     public String userKeeps(Boolean displayedScore) {
-        Scanner kb = new Scanner(System.in);
         if(!displayedScore) {
             System.out.println("Enter dice you would like to keep (y or n) or 'S' to see your Scorecard:");
         }
         else {
             System.out.println("Enter dice you would like to keep (y or n)");
         }
+        Scanner kb = new Scanner(System.in);
         String userInput = kb.nextLine();
-        kb.close();
         return userInput;
     }
 }

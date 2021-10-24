@@ -1,10 +1,10 @@
 /**
  * This program plays a simple version of Yahtzee
  * CPSC 224, Fall 2021
- * Homework 2
+ * Homework 3
  * No sources to site
  * @ConnorDeide
- * @Version 2.0 10/3/2021
+ * @Version 3.0 10/24/2021
  */
 package edu.gonzaga;
 
@@ -37,12 +37,15 @@ public class Game {
             game.getGameConfig(); //Read new configuration from file
             outputGameConfig();
         }
-        // make and get the players hand
-        player.makeHand(game);
-        player.hand = player.getHand();
-        //Output the scores given the players hand
+        //Set the scorecard
+        player.scorecard.setScoreCard(game);
+        int availableScoreLines = (game.dieSides + 7);
+        // loop for however many available lines
+        while(availableScoreLines > 0) {
+            player.playRound(game);
+            availableScoreLines--;
+        }
         System.out.println();
-        player.scorecard.setScoreCard(game, player);
         player.displayPlayerScoreCard(game);
         System.out.println();
     }
@@ -118,7 +121,6 @@ public class Game {
     public static String getInput() {
         Scanner kb = new Scanner(System.in);
         String input = kb.nextLine();
-        kb.close();
         return input;
     }
 }

@@ -1,10 +1,10 @@
 /**
  * This program plays a simple version of Yahtzee
  * CPSC 224, Fall 2021
- * Homework 2
+ * Homework 3
  * No sources to site
  * @ConnorDeide
- * @Version 2.0 10/3/2021
+ * @Version 3.0 10/24/2021
  */
 package edu.gonzaga;
 
